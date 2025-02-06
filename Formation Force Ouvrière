@@ -1,0 +1,96 @@
+import streamlit as st
+
+# Chatbot Syndical
+class ChatbotSyndical:
+    def __init__(self):
+        self.base_connaissances = {
+            "droits travailleurs": """Les droits des travailleurs incluent :
+            - Un salaire minimum garanti.
+            - La protection contre le licenciement abusif.
+            - Des congés payés et des horaires de travail réglementés.
+            - Le droit de se syndiquer et de faire grève.
+            - Une couverture sociale et des conditions de travail sécurisées.""",
+
+            "rôle syndicat": """Un syndicat a pour mission de :
+            - Défendre les droits des travailleurs.
+            - Négocier avec l’employeur pour améliorer les conditions de travail et les salaires.
+            - Assister et représenter les salariés en cas de conflit.
+            - Organiser des mobilisations et sensibiliser les travailleurs.""",
+
+            "négociation collective": """La négociation collective est un processus entre employeurs et syndicats pour fixer les conditions de travail et les salaires.
+            Étapes :
+            1. Préparer des revendications précises.
+            2. Identifier les arguments de l’employeur et préparer des contre-arguments.
+            3. Conduire les discussions avec diplomatie et fermeté.
+            4. Conclure par un accord ou poursuivre la mobilisation si nécessaire.""",
+
+            "rédaction tract": """Un tract efficace doit être :
+            - **Court et impactant** : Pas plus d’une page.
+            - **Mobilisateur** : Utiliser des phrases directes et percutantes.
+            - **Argumenté** : Donner des raisons claires d’agir.
+
+            Exemple :
+            **STOP À L’EXPLOITATION – REJOIGNEZ LA GRÈVE !**
+            Nous, salariés de [entreprise], dénonçons des conditions de travail inacceptables.
+            Il est temps d’agir ! Rejoignez-nous !"""
+        }
+
+    def répondre(self, question):
+        question = question.lower()
+        for clé in self.base_connaissances:
+            if clé in question:
+                return self.base_connaissances[clé]
+        return "Je ne connais pas encore la réponse à cette question, mais je peux essayer de la générer pour vous !"
+
+    def générer_document(self, type_document, contexte=""):
+        if type_document == "courrier":
+            return f"""Objet : {contexte if contexte else 'Demande syndicale'}
+
+Madame, Monsieur,
+
+Nous souhaitons vous interpeller sur la situation concernant [préciser la situation]. 
+Nous demandons [revendications principales].
+
+Nous vous proposons une rencontre le [date] pour en discuter.
+
+Dans l’attente de votre réponse,
+Cordialement,
+[Nom du syndicat]"""
+
+        elif type_document == "tract":
+            return f"""**{contexte.upper() if contexte else 'MOBILISONS-NOUS !'}**
+
+Salariés de [entreprise], il est temps d’agir !
+- [Motif de la mobilisation]
+- [Revendication principale]
+
+Rejoignez-nous le [date] pour une action collective ! Plus nous serons nombreux, plus nous serons forts !"""
+
+        else:
+            return "Type de document non reconnu."
+
+# Initialisation du chatbot
+chatbot = ChatbotSyndical()
+
+# Interface Streamlit
+st.title("🤖 Chatbot Syndical Interactif")
+
+# Section Chatbot
+st.header("💬 Posez votre question")
+user_input = st.text_input("Tapez votre question ici...")
+
+if st.button("Envoyer"):
+    réponse = chatbot.répondre(user_input)
+    st.write(f"🤖 **Réponse** : {réponse}")
+
+# Section Génération de Documents
+st.header("📄 Génération de Documents Syndicaux")
+doc_type = st.selectbox("Choisissez un type de document :", ["Courrier syndical", "Tract de mobilisation"])
+contexte = st.text_input("Décrivez le contexte du document (ex: Demande de réunion, Mobilisation...)")
+
+if st.button("Générer Document"):
+    type_doc = "courrier" if doc_type == "Courrier syndical" else "tract"
+    document = chatbot.générer_document(type_doc, contexte)
+    st.text_area("📄 Document généré :", document, height=200)
+
+st.write("📌 **Astuce** : Vous pouvez copier-coller le texte généré pour l'utiliser directement.")
